@@ -1,0 +1,31 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: musicdb
+      MYSQL_USER: music
+      MYSQL_PASSWORD: music
+      MYSQL_ROOT_PASSWORD: rootpw
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpw"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  api:
+    build: .
+    environment:
+      DB_URL: mysql+pymysql://music:music@db:3306/musicdb
+      # MB_USER_AGENT: "DaniMusic/1.0 ( nethalo@gmail.com )"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  dbdata:
