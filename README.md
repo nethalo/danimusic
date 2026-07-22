@@ -15,6 +15,7 @@ fastest — and a truthful answer even when the upstream API is down.
 - [Why this exists](#why-this-exists)
 - [Architecture](#architecture)
 - [Request flow](#request-flow)
+- [Requirements](#requirements)
 - [Quick start](#quick-start)
 - [Endpoints](#endpoints)
 - [Response shape](#response-shape)
@@ -95,6 +96,46 @@ Key properties:
   its retries, but total vendor wait can never blow past `T` before falling back.
 - **Partial / malformed vendor bodies are validated and discarded** — a truncated
   stream or an HTML rate-limit page never enters the cache or the database.
+
+---
+
+## Requirements
+
+The repository is **fully self-contained** — everything needed to build and run
+the service ships in it. You do **not** need any prebuilt image or access to a
+container registry.
+
+**To run with Docker (recommended):**
+
+- [Docker](https://docs.docker.com/get-docker/) 24+ with the Compose plugin
+  (`docker compose version`). That's the only prerequisite.
+
+**To run locally without Docker:**
+
+- Python **3.12** (the version the dependencies are pinned for)
+- A reachable **MySQL 8.4** instance
+- The Python packages in [`requirements.txt`](requirements.txt) (pinned)
+
+> **Where do the Docker images come from?**
+> They are **not** stored in the repo or pulled from a private registry — they are
+> produced on your own machine:
+> - **`danimusic-api`** is *built locally* from the [`Dockerfile`](Dockerfile) the
+>   first time you run `docker compose up --build` (the `--build` flag does it).
+>   Because `requirements.txt` is pinned, everyone gets the same Python deps.
+> - **`mysql:8.4`** is *pulled automatically* from Docker Hub by Compose.
+>
+> So a third party who only has the repo URL just needs Docker — no image handoff:
+> ```bash
+> git clone git@github.com:nethalo/danimusic.git
+> cd danimusic
+> docker compose up --build
+> ```
+> Built images live in Docker's local store (`docker images`), inside the Docker
+> Desktop VM — not on your filesystem and not in git.
+>
+> *Reproducible, not bit-identical:* pinned pip versions guarantee the same
+> dependencies, but the base images (`python:3.12-slim`, `mysql:8.4`) can change
+> over time — pin them by digest if you need byte-exact builds.
 
 ---
 

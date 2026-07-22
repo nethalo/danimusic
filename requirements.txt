@@ -1,3 +1,12 @@
+# Pinned Python dependencies for the DaniMusic backend.
+#
+# These are installed automatically when you build the Docker image
+# (`docker compose up --build`), so a third party who only has the repo URL
+# needs nothing but Docker — no prebuilt image or registry access required.
+#
+# For a local (non-Docker) run: use Python 3.12 (the version these are pinned
+# for; newer interpreters may lack prebuilt wheels) and `pip install -r requirements.txt`.
+
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
 httpx==0.28.1
